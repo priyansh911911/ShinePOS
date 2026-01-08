@@ -19,9 +19,7 @@ const Login = () => {
     setError('');
 
     try {
-      const endpoint = loginType === 'super' 
-        ? `${import.meta.env.VITE_API_URL}/api/auth/login`
-        : `${import.meta.env.VITE_API_URL}/api/auth/login`;
+      const endpoint = `${import.meta.env.VITE_API_URL}/api/auth/add/login`;
 
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -39,13 +37,15 @@ const Login = () => {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         
-        if (data.user.role === 'RESTAURANT_ADMIN') {
+        if (data.user.role === 'SUPER_ADMIN') {
+          navigate('/super-admin');
+        } else if (data.user.role === 'RESTAURANT_ADMIN') {
           navigate('/restaurant-dashboard');
         } else {
           navigate('/dashboard');
         }
       } else {
-        setError(data.message || 'Login failed');
+        setError(data.error || 'Login failed');
       }
     } catch (err) {
       setError('Network error. Please try again.');

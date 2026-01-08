@@ -23,7 +23,7 @@ const AddCategory = ({ onSuccess }) => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/categories/add`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/categories/add/category`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

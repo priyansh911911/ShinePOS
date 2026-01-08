@@ -36,7 +36,7 @@ const reasturantadd = ({ onSuccess }) => {
       {success ? (
         <Thankyou />
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 grid grid-cols-3 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Restaurant Name</label>
             <input
@@ -180,7 +180,7 @@ const reasturantadd = ({ onSuccess }) => {
             />
           </div>
 
-          <div>
+          <div className="col-span-3">
             <label className="flex items-center">
               <input
                 type="checkbox"
@@ -195,18 +195,20 @@ const reasturantadd = ({ onSuccess }) => {
           </div>
 
           {(error || apiError) && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <div className="col-span-3 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
               {error || apiError}
             </div>
           )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white font-medium py-3 px-4 rounded-lg transition-colors"
-          >
-            {loading ? 'Registering...' : 'Register'}
-          </button>
+          <div className="col-span-3 flex justify-center">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full max-w-md bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+            >
+              {loading ? 'Registering...' : 'Register'}
+            </button>
+          </div>
         </form>
       )}
     </div>

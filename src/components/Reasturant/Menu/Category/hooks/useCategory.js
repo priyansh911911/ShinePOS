@@ -8,7 +8,7 @@ export const useCategory = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/categories/all`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/categories/all/category`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -26,7 +26,7 @@ export const useCategory = () => {
   const deleteCategory = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/categories/delete/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/categories/delete/category/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -43,7 +43,7 @@ export const useCategory = () => {
   const updateCategory = async (id, categoryData) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/categories/update/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/categories/update/category/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
