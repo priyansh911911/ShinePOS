@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Dashboard from '../components/superadmin/Dashboard/Dashboard';
 import Restaurants from '../components/superadmin/Addreasturant/Restaurants';
 
 const SuperAdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(location.state?.activeTab || 'dashboard');
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -13,6 +14,12 @@ const SuperAdminDashboard = () => {
     localStorage.removeItem('user');
     navigate('/login');
   };
+
+  useEffect(() => {
+    if (location.state?.activeTab) {
+      setActiveTab(location.state.activeTab);
+    }
+  }, [location.state]);
 
   return (
     <div className="flex">

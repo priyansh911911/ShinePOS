@@ -1,29 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { FiEdit2, FiTrash2, FiToggleLeft, FiToggleRight } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
+import { useRestaurantList } from './hooks/useRestaurantList';
 
-const RestaurantList = () => {
-  const [restaurants, setRestaurants] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchRestaurants();
-  }, []);
-
-  const fetchRestaurants = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/restaurants/all/restaurant`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
-      setRestaurants(data.restaurants || []);
-    } catch (error) {
-      console.error('Error fetching restaurants:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+const RestaurantList = ({ onEdit }) => {
+  const navigate = useNavigate();
+  const { restaurants, loading, toggleStatus, deleteRestaurant } = useRestaurantList();
 
   if (loading) {
     return (
@@ -44,6 +26,7 @@ const RestaurantList = () => {
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plan</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
@@ -73,6 +56,31 @@ const RestaurantList = () => {
                 }`}>
                   {restaurant.isActive ? 'Active' : 'Inactive'}
                 </span>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => toggleStatus(restaurant._id)}
+                    className={restaurant.isActive ? 'text-green-600 hover:text-green-900' : 'text-red-600 hover:text-red-900'}
+                    title={restaurant.isActive ? 'Deactivate' : 'Activate'}
+                  >
+                    {restaurant.isActive ? <FiToggleRight size={20} /> : <FiToggleLeft size={20} />}
+                  </button>
+                  <button
+                    onClick={() => onEdit(restaurant)}
+                    className="text-indigo-600 hover:text-indigo-900"
+                    title="Edit"
+                  >
+                    <FiEdit2 size={18} />
+                  </button>
+                  <button
+                    onClick={() => deleteRestaurant(restaurant._id)}
+                    className="text-red-600 hover:text-red-900"
+                    title="Delete"
+                  >
+                    <FiTrash2 size={18} />
+                  </button>
+                </div>
               </td>
             </tr>
           ))}

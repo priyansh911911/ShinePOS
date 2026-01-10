@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import RestaurantDashboard from './pages/RestaurantDashboard';
+import EditRestaurant from './components/superadmin/Addreasturant/EditRestaurant';
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/super-admin" element={<SuperAdminDashboard />} />
+          <Route path="/superadmin/restaurants/edit/:id" element={<EditRestaurant />} />
           <Route path="/dashboard" element={<SuperAdminDashboard />} />
           <Route path="/restaurant-dashboard" element={<RestaurantDashboard />} />
           <Route path="/" element={<Navigate to="/login" replace />} />
