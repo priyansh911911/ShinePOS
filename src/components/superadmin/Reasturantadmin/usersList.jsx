@@ -1,7 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { FiToggleLeft, FiToggleRight, FiEdit2, FiTrash2 } from 'react-icons/fi'
 import { useUsers } from './hooks/useUsers'
+import EditUser from './edituser'
 
 const UsersList = () => {
+  const [editingUser, setEditingUser] = useState(null);
   const {
     filteredUsers,
     restaurants,
@@ -10,8 +13,27 @@ const UsersList = () => {
     loading,
     error,
     toggleUserStatus,
-    users
+    deleteUser,
+    users,
+    fetchAllUsers
   } = useUsers();
+
+  const handleEditSuccess = () => {
+    setEditingUser(null);
+    fetchAllUsers();
+  };
+
+  if (editingUser) {
+    return (
+      <div className="p-6">
+        <EditUser
+          user={editingUser}
+          onBack={() => setEditingUser(null)}
+          onSuccess={handleEditSuccess}
+        />
+      </div>
+    );
+  }
 
   if (loading) return <div className="p-6 text-center">Loading users...</div>;
   if (error) return <div className="p-6 text-red-600">{error}</div>;
@@ -78,20 +100,33 @@ const UsersList = () => {
                         {user.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       {user._id.toString().endsWith('_admin') ? (
                         <span className="text-gray-400 text-sm">N/A</span>
                       ) : (
-                        <button
-                          onClick={() => toggleUserStatus(user)}
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                            user.isActive ? 'bg-green-600' : 'bg-gray-300'
-                          }`}
-                        >
-                          <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                            user.isActive ? 'translate-x-6' : 'translate-x-1'
-                          }`} />
-                        </button>
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={() => toggleUserStatus(user)}
+                            className={user.isActive ? 'text-green-600 hover:text-green-900' : 'text-red-600 hover:text-red-900'}
+                            title={user.isActive ? 'Deactivate' : 'Activate'}
+                          >
+                            {user.isActive ? <FiToggleRight size={20} /> : <FiToggleLeft size={20} />}
+                          </button>
+                          <button
+                            onClick={() => setEditingUser(user)}
+                            className="text-indigo-600 hover:text-indigo-900"
+                            title="Edit"
+                          >
+                            <FiEdit2 size={18} />
+                          </button>
+                          <button
+                            onClick={() => deleteUser(user)}
+                            className="text-red-600 hover:text-red-900"
+                            title="Delete"
+                          >
+                            <FiTrash2 size={18} />
+                          </button>
+                        </div>
                       )}
                     </td>
                   </tr>

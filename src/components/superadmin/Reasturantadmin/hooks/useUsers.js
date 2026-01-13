@@ -83,6 +83,23 @@ export const useUsers = () => {
     }
   };
 
+  const deleteUser = async (user) => {
+    if (!confirm(`Are you sure you want to delete ${user.name}?`)) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}/api/user-management/delete/restaurants/users/${user.restaurantId}/${user._id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      setUsers(prev => prev.filter(u => u._id !== user._id));
+    } catch (err) {
+      console.error('Delete user error:', err);
+      alert('Failed to delete user');
+    }
+  };
+
   return {
     users,
     filteredUsers,
@@ -91,6 +108,8 @@ export const useUsers = () => {
     setSelectedRestaurant,
     loading,
     error,
-    toggleUserStatus
+    toggleUserStatus,
+    deleteUser,
+    fetchAllUsers
   };
 };
