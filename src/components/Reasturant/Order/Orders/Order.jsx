@@ -5,6 +5,7 @@ import OrderList from './OrderList';
 import CreateOrder from './CreateOrder';
 import OrderDetails from './OrderDetails';
 import PaymentModal from '../Payment/PaymentModal';
+import TransferModal from './TransferModal';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -15,6 +16,7 @@ const Order = () => {
   const [activeTab, setActiveTab] = useState('list');
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showTransferModal, setShowTransferModal] = useState(false);
 
   useEffect(() => {
     fetchOrders();
@@ -132,6 +134,15 @@ const Order = () => {
     setShowPaymentModal(true);
   };
 
+  const handleTransferClick = (order) => {
+    setSelectedOrder(order);
+    setShowTransferModal(true);
+  };
+
+  const handleTransferSuccess = () => {
+    fetchOrders();
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -185,6 +196,7 @@ const Order = () => {
           onUpdateStatus={handleUpdateStatus}
           onUpdatePriority={handleUpdatePriority}
           onProcessPayment={handlePaymentClick}
+          onTransfer={handleTransferClick}
           onRefresh={fetchOrders}
         />
       )}
@@ -210,6 +222,17 @@ const Order = () => {
           order={selectedOrder}
           onProcessPayment={handleProcessPayment}
           onClose={() => setShowPaymentModal(false)}
+        />
+      )}
+
+      {showTransferModal && selectedOrder && (
+        <TransferModal
+          order={selectedOrder}
+          onClose={() => {
+            setShowTransferModal(false);
+            setSelectedOrder(null);
+          }}
+          onSuccess={handleTransferSuccess}
         />
       )}
     </div>

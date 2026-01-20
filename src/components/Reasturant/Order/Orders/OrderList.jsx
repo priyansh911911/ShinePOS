@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { FiEye, FiEdit, FiDollarSign, FiRefreshCw } from 'react-icons/fi';
+import { FiEye, FiEdit, FiDollarSign, FiRefreshCw, FiArrowRight } from 'react-icons/fi';
 
-const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRefresh, onUpdatePriority }) => {
+const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRefresh, onUpdatePriority, onTransfer }) => {
   const [filterStatus, setFilterStatus] = useState('ALL');
 
   console.log('OrderList loaded with onUpdatePriority:', !!onUpdatePriority);
@@ -68,6 +68,7 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
             <tr>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order #</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Table</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Items</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Priority</th>
@@ -90,6 +91,9 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
                       <div className="text-gray-500">{order.customerPhone}</div>
                     )}
                   </div>
+                </td>
+                <td className="px-4 py-3 text-sm text-gray-900">
+                  {order.tableNumber || 'N/A'}
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-900">
                   {order.items.length} item{order.items.length !== 1 ? 's' : ''}
@@ -146,6 +150,15 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
                     >
                       <FiEye />
                     </button>
+                    {order.tableId && order.status !== 'PAID' && order.status !== 'CANCELLED' && (
+                      <button
+                        onClick={() => onTransfer(order)}
+                        className="text-purple-600 hover:text-purple-800"
+                        title="Transfer Table"
+                      >
+                        <FiArrowRight />
+                      </button>
+                    )}
                     {!order.paymentDetails && (
                       <button
                         onClick={() => onProcessPayment(order)}
