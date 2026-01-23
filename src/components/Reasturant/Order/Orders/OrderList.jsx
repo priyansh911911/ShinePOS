@@ -4,6 +4,7 @@ import { FiRefreshCw, FiUser, FiPhone, FiGrid, FiShoppingBag, FiFileText, FiPlus
 const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRefresh, onUpdatePriority, onTransfer, onAddItems, activeTab, setActiveTab }) => {
   const [filterStatus, setFilterStatus] = useState('ALL');
   const [expandedOrderItems, setExpandedOrderItems] = useState(null);
+  const [refreshingList, setRefreshingList] = useState(false);
 
   console.log('OrderList loaded with onUpdatePriority:', !!onUpdatePriority);
   console.log('Sample order priority:', orders[0]?.priority);
@@ -42,6 +43,12 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
     }
   }, [filteredOrders, selectedOrder]);
 
+  const handleRefresh = async () => {
+    setRefreshingList(true);
+    await onRefresh();
+    setRefreshingList(false);
+  };
+
   const handleOrderClick = (order) => {
     setSelectedOrder(order);
   };
@@ -56,7 +63,13 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
             <h3 className="text-xl font-bold text-gray-900"><FiShoppingBag className="inline mr-2" />Orders ({filteredOrders.length})</h3>
           </div>
           <div className="overflow-y-auto max-h-[calc(100vh-300px)] p-4 space-y-3">
-            {filteredOrders.map((order) => (
+            {refreshingList ? (
+              <div className="flex justify-center items-center py-10">
+                <div className="animate-spin rounded-full h-8 w-8 border-2 border-purple-500 border-t-transparent"></div>
+              </div>
+            ) : (
+              <>
+                {filteredOrders.map((order) => (
               <div
                 key={order._id}
                 onClick={() => handleOrderClick(order)}
@@ -90,15 +103,17 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
                       </div>
                     )}
                   </div>
-                  <span className="font-bold text-green-700">{formatCurrency(order.totalAmount)}</span>
+                  <span className="font-bold text-gray-900">{formatCurrency(order.totalAmount)}</span>
                 </div>
               </div>
-            ))}
-            {filteredOrders.length === 0 && (
-              <div className="text-center py-10">
-                <div className="text-5xl mb-3">🍽️</div>
-                <p className="text-gray-900 font-medium">No orders found</p>
-              </div>
+                ))}
+                {filteredOrders.length === 0 && (
+                  <div className="text-center py-10">
+                    <div className="text-5xl mb-3">🍽️</div>
+                    <p className="text-gray-900 font-medium">No orders found</p>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -149,7 +164,7 @@ const OrderList = ({ orders, onViewOrder, onUpdateStatus, onProcessPayment, onRe
                 <div className="bg-white/30 backdrop-blur-md rounded-xl p-4 border border-white/30">
                   <div className="flex justify-between items-center mb-4">
                     <span className="text-gray-900 font-medium">Total Amount:</span>
-                    <span className="text-2xl font-bold text-green-700">{formatCurrency(selectedOrder.totalAmount)}</span>
+                    <span className="text-2xl font-bold text-gray-900">{formatCurrency(selectedOrder.totalAmount)}</span>
                   </div>
                   <div className="flex space-x-2">
                     <button
