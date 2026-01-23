@@ -46,7 +46,7 @@ const Order = () => {
   };
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen p-3 sm:p-4 md:p-6 pt-20 lg:pt-6">
       <div className="max-w-7xl mx-auto">
         {error && (
           <div className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-4 rounded-xl mb-6 animate-slideIn">
@@ -58,60 +58,64 @@ const Order = () => {
         )}
 
         {/* Persistent Navigation Header */}
-        <div className="bg-white/30 backdrop-blur-md rounded-2xl p-4 mb-6">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-3">
+        <div className="bg-white/30 backdrop-blur-md rounded-2xl p-3 sm:p-4 mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setActiveTab('list')}
-                className={`px-6 py-3 rounded-xl flex items-center space-x-2 font-medium transition-colors ${
+                className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-3 rounded-xl flex items-center justify-center space-x-2 font-medium transition-colors text-sm ${
                   activeTab === 'list' 
                     ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white' 
                     : 'bg-white/30 text-gray-900 hover:bg-white/40'
                 }`}
               >
-                <span><FiClipboard className="inline mr-2" />Orders</span>
+                <FiClipboard />
+                <span className="hidden sm:inline">Orders</span>
               </button>
               
               <button
                 onClick={() => setActiveTab('create')}
-                className={`px-6 py-3 rounded-xl flex items-center space-x-2 font-medium transition-colors ${
+                className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-3 rounded-xl flex items-center justify-center space-x-2 font-medium transition-colors text-sm ${
                   activeTab === 'create' 
                     ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white' 
                     : 'bg-white/30 text-gray-900 hover:bg-white/40'
                 }`}
               >
-                <span><FiPlus className="inline mr-2" />New Order</span>
+                <FiPlus />
+                <span className="hidden sm:inline">New Order</span>
               </button>
               
               <button
                 onClick={() => setActiveTab('history')}
-                className={`px-6 py-3 rounded-xl flex items-center space-x-2 font-medium transition-colors ${
+                className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-3 rounded-xl flex items-center justify-center space-x-2 font-medium transition-colors text-sm ${
                   activeTab === 'history' 
                     ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white' 
                     : 'bg-white/30 text-gray-900 hover:bg-white/40'
                 }`}
               >
-                <span><FiArchive className="inline mr-2" />History</span>
+                <FiArchive />
+                <span className="hidden sm:inline">History</span>
               </button>
               
               <select
-                className="bg-white/30 backdrop-blur-md border border-white/40 text-gray-900 rounded-xl px-6 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all font-medium"
+                className="flex-1 sm:flex-none bg-white/30 backdrop-blur-md border border-white/40 text-gray-900 rounded-xl px-3 sm:px-6 py-2 sm:py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all font-medium text-sm"
               >
-                <option value="ALL"><FiList className="inline mr-1" />All Orders</option>
-                <option value="PENDING">⏳ Pending</option>
-                <option value="PREPARING">👨🍳 Preparing</option>
-                <option value="READY">✅ Ready</option>
-                <option value="DELIVERED">🚀 Delivered</option>
-                <option value="CANCELLED">❌ Cancelled</option>
-                <option value="PAID">💰 Paid</option>
+                <option value="ALL">All Orders</option>
+                <option value="PENDING">Pending</option>
+                <option value="PREPARING">Preparing</option>
+                <option value="READY">Ready</option>
+                <option value="DELIVERED">Delivered</option>
+                <option value="CANCELLED">Cancelled</option>
+                <option value="PAID">Paid</option>
               </select>
             </div>
             
             <button
               onClick={fetchOrders}
-              className="flex items-center space-x-2 px-6 py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors font-medium"
+              className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-white/30 backdrop-blur-md hover:bg-white/40 text-gray-900 rounded-xl transition-colors font-medium text-sm"
             >
-              <span><FiRefreshCw className="inline mr-2" />Refresh</span>
+              <FiRefreshCw />
+              <span className="hidden sm:inline">Refresh</span>
             </button>
           </div>
         </div>
