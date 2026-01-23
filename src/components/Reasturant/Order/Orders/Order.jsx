@@ -45,18 +45,6 @@ const Order = () => {
     setActiveTab('list'); // Redirect to orders page
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-gradient-to-br from-purple-50 to-pink-50">
-        <div className="text-center">
-          <div className="text-6xl mb-4 animate-pulse-slow">🍽️</div>
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-purple-500 border-t-transparent mx-auto"></div>
-          <p className="mt-4 text-gray-600 font-medium">Loading orders...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto">
@@ -128,76 +116,80 @@ const Order = () => {
           </div>
         </div>
 
-      {activeTab === 'list' && (
-        <div className="animate-fadeIn">
-          <OrderList
-            orders={orders}
-            onViewOrder={handleViewOrder}
-            onUpdateStatus={handleUpdateStatus}
-            onUpdatePriority={handleUpdatePriority}
-            onProcessPayment={handlePaymentClick}
-            onAddItems={handleAddItems}
-            onTransfer={handleTransferClick}
-            onRefresh={fetchOrders}
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            showNavigation={false}
-          />
-        </div>
-      )}
+        {!loading && (
+          <>
+            {activeTab === 'list' && (
+              <div className="animate-fadeIn">
+                <OrderList
+                  orders={orders}
+                  onViewOrder={handleViewOrder}
+                  onUpdateStatus={handleUpdateStatus}
+                  onUpdatePriority={handleUpdatePriority}
+                  onProcessPayment={handlePaymentClick}
+                  onAddItems={handleAddItems}
+                  onTransfer={handleTransferClick}
+                  onRefresh={fetchOrders}
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                  showNavigation={false}
+                />
+              </div>
+            )}
 
-      {activeTab === 'create' && (
-        <div className="animate-fadeIn">
-          <CreateOrder
-            onCreateOrder={handleCreateOrder}
-            onCancel={() => setActiveTab('list')}
-          />
-        </div>
-      )}
+            {activeTab === 'create' && (
+              <div className="animate-fadeIn">
+                <CreateOrder
+                  onCreateOrder={handleCreateOrder}
+                  onCancel={() => setActiveTab('list')}
+                />
+              </div>
+            )}
 
-      {activeTab === 'details' && selectedOrder && (
-        <OrderDetails
-          order={selectedOrder}
-          onUpdateStatus={handleUpdateStatus}
-          onProcessPayment={handlePaymentClick}
-          onBack={() => setActiveTab('list')}
-        />
-      )}
+            {activeTab === 'details' && selectedOrder && (
+              <OrderDetails
+                order={selectedOrder}
+                onUpdateStatus={handleUpdateStatus}
+                onProcessPayment={handlePaymentClick}
+                onBack={() => setActiveTab('list')}
+              />
+            )}
 
-      {activeTab === 'history' && (
-        <div className="animate-fadeIn">
-          <OrderHistory />
-        </div>
-      )}
+            {activeTab === 'history' && (
+              <div className="animate-fadeIn">
+                <OrderHistory />
+              </div>
+            )}
 
-      {showPaymentModal && selectedOrder && (
-        <PaymentModal
-          order={selectedOrder}
-          onProcessPayment={handleProcessPayment}
-          onClose={() => setShowPaymentModal(false)}
-        />
-      )}
+            {showPaymentModal && selectedOrder && (
+              <PaymentModal
+                order={selectedOrder}
+                onProcessPayment={handleProcessPayment}
+                onClose={() => setShowPaymentModal(false)}
+              />
+            )}
 
-      {showAddItems && (
-        <div>
-          <p>Debug: showAddItems = {showAddItems}</p>
-          <AddNewOrder
-            orderId={showAddItems}
-            onClose={handleAddItemsClose}
-          />
-        </div>
-      )}
+            {showAddItems && (
+              <div>
+                <p>Debug: showAddItems = {showAddItems}</p>
+                <AddNewOrder
+                  orderId={showAddItems}
+                  onClose={handleAddItemsClose}
+                />
+              </div>
+            )}
 
-      {showTransferModal && selectedOrder && (
-        <TransferModal
-          order={selectedOrder}
-          onClose={() => {
-            setShowTransferModal(false);
-            setSelectedOrder(null);
-          }}
-          onSuccess={handleTransferSuccess}
-        />
-      )}
+            {showTransferModal && selectedOrder && (
+              <TransferModal
+                order={selectedOrder}
+                onClose={() => {
+                  setShowTransferModal(false);
+                  setSelectedOrder(null);
+                }}
+                onSuccess={handleTransferSuccess}
+              />
+            )}
+          </>
+        )}
       </div>
     </div>
   );
