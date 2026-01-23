@@ -13,6 +13,7 @@ export const useCreateOrder = (onCreateOrder) => {
   const [guestCount, setGuestCount] = useState('');
   const [selectedTable, setSelectedTable] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadingMenu, setLoadingMenu] = useState(true);
   const [error, setError] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedVariation, setSelectedVariation] = useState(null);
@@ -33,6 +34,7 @@ export const useCreateOrder = (onCreateOrder) => {
   }, []);
 
   const fetchMenuItems = async () => {
+    setLoadingMenu(true);
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(`${API_BASE_URL}/api/menus/get/all-menu-items`, {
@@ -42,6 +44,8 @@ export const useCreateOrder = (onCreateOrder) => {
     } catch (err) {
       console.error('Fetch menu items error:', err);
       setError('Failed to fetch menu items');
+    } finally {
+      setLoadingMenu(false);
     }
   };
 
@@ -201,6 +205,7 @@ export const useCreateOrder = (onCreateOrder) => {
     isCapacityMet,
     toggleTableSelection,
     loading,
+    loadingMenu,
     error,
     selectedItem,
     selectedVariation,

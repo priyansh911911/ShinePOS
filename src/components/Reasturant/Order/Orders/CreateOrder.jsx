@@ -22,6 +22,7 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
     isCapacityMet,
     toggleTableSelection,
     loading,
+    loadingMenu,
     error,
     selectedItem,
     selectedVariation,
@@ -61,37 +62,46 @@ const CreateOrder = ({ onCreateOrder, onCancel }) => {
         </div>
         
         <div className="grid grid-cols-2 gap-2 lg:gap-3 max-h-[300px] lg:max-h-[calc(100vh-350px)] overflow-y-auto">
-          {menuItems.filter(item => 
-            item.itemName.toLowerCase().includes(searchQuery.toLowerCase())
-          ).map((item) => (
-            <div key={item._id} className="bg-white/20 backdrop-blur-md rounded-xl p-3 lg:p-4 border border-white/20 hover:bg-white/25 transition-all">
-              <div className="flex justify-between items-start mb-2">
-                <h4 className="font-medium text-white text-sm lg:text-base">{item.itemName}</h4>
-                <span className="text-xs lg:text-sm font-semibold text-green-300">
-                  ₹{item.variation && item.variation.length > 0 
-                    ? Math.min(...item.variation.map(v => v.price || 0))
-                    : 0}
-                </span>
+          {loadingMenu ? (
+            <div className="col-span-2 flex justify-center items-center py-10">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent mx-auto mb-3"></div>
+                <p className="text-white text-sm">Loading menu...</p>
               </div>
-              
-              {item.description && (
-                <p className="text-xs text-gray-300 mb-2 lg:mb-3 line-clamp-2">{item.description}</p>
-              )}
-              
-              <button
-                type="button"
-                onClick={() => openItemModal(item)}
-                disabled={item.status !== 'active'}
-                className={`w-full py-1.5 px-2 rounded-lg text-xs font-medium transition-all ${
-                  item.status === 'active'
-                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg'
-                    : 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
-                }`}
-              >
-                {item.status === 'active' ? '➕ Add' : 'Not Available'}
-              </button>
             </div>
-          ))}
+          ) : (
+            menuItems.filter(item => 
+              item.itemName.toLowerCase().includes(searchQuery.toLowerCase())
+            ).map((item) => (
+              <div key={item._id} className="bg-white/20 backdrop-blur-md rounded-xl p-3 lg:p-4 border border-white/20 hover:bg-white/25 transition-all">
+                <div className="flex justify-between items-start mb-2">
+                  <h4 className="font-medium text-white text-sm lg:text-base">{item.itemName}</h4>
+                  <span className="text-xs lg:text-sm font-semibold text-green-300">
+                    ₹{item.variation && item.variation.length > 0 
+                      ? Math.min(...item.variation.map(v => v.price || 0))
+                      : 0}
+                  </span>
+                </div>
+                
+                {item.description && (
+                  <p className="text-xs text-gray-300 mb-2 lg:mb-3 line-clamp-2">{item.description}</p>
+                )}
+                
+                <button
+                  type="button"
+                  onClick={() => openItemModal(item)}
+                  disabled={item.status !== 'active'}
+                  className={`w-full py-1.5 px-2 rounded-lg text-xs font-medium transition-all ${
+                    item.status === 'active'
+                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg'
+                      : 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
+                  }`}
+                >
+                  {item.status === 'active' ? '➕ Add' : 'Not Available'}
+                </button>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
