@@ -6,14 +6,20 @@ const KOT = () => {
   const [kots, setKots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('active');
-  const [openDropdown, setOpenDropdown] = useState(null);
+
+  const getNextStatus = (currentStatus) => {
+    const statusFlow = {
+      'PENDING': { next: 'PREPARING', label: 'Start Preparing', emoji: '👨🍳', color: 'bg-orange-500' },
+      'PREPARING': { next: 'READY', label: 'Mark Ready', emoji: '✅', color: 'bg-green-500' },
+      'READY': null
+    };
+    return statusFlow[currentStatus];
+  };
 
   const statuses = [
-    { value: 'PENDING', label: 'Pending', emoji: '⏳' },
-    { value: 'PREPARING', label: 'Preparing', emoji: '👨🍳' },
-    { value: 'READY', label: 'Ready', emoji: '✅' },
-    { value: 'DELIVERED', label: 'Delivered', emoji: '🚀' },
-    { value: 'CANCELLED', label: 'Cancelled', emoji: '❌' }
+    { value: 'PENDING', label: 'Pending', emoji: '⏳', color: 'bg-yellow-500' },
+    { value: 'PREPARING', label: 'Preparing', emoji: '👨🍳', color: 'bg-orange-500' },
+    { value: 'READY', label: 'Ready', emoji: '✅', color: 'bg-green-500' }
   ];
 
   const getStatusDisplay = (status) => {
@@ -139,7 +145,7 @@ const KOT = () => {
           {kots.map((kot, index) => (
             <motion.div 
               key={kot._id} 
-              className={`bg-white/30 backdrop-blur-md rounded-xl overflow-visible transition-colors hover:bg-white/35 ${openDropdown === kot._id ? 'z-50' : 'z-0'} ${
+              className={`bg-white/30 backdrop-blur-md rounded-xl overflow-visible transition-colors hover:bg-white/35 ${
                 kot.priority === 'URGENT' ? 'ring-2 ring-red-500' : 
                 kot.priority === 'HIGH' ? 'ring-2 ring-orange-400' : ''
               }`}
@@ -192,36 +198,24 @@ const KOT = () => {
                   ))}
                 </div>
 
-                {/* Status Dropdown */}
-                <div className="relative">
-                  <button
-                    onClick={() => kot.status !== 'READY' && kot.status !== 'DELIVERED' && kot.status !== 'CANCELLED' && setOpenDropdown(openDropdown === kot._id ? null : kot._id)}
-                    disabled={kot.status === 'READY' || kot.status === 'DELIVERED' || kot.status === 'CANCELLED'}
-                    className={`w-full px-3 py-2 bg-white/40 backdrop-blur-lg rounded-lg text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 flex items-center justify-between ${
-                      (kot.status === 'READY' || kot.status === 'DELIVERED' || kot.status === 'CANCELLED') ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'
-                    }`}
-                  >
-                    <span>{getStatusDisplay(kot.status)}</span>
-                    <span className={`transition-transform ${openDropdown === kot._id ? 'rotate-180' : ''}`}>▼</span>
-                  </button>
+                {/* Status Button */}
+                {(() => {
+                  const nextStatus = getNextStatus(kot.status);
+                  const currentStatus = statuses.find(s => s.value === kot.status);
                   
-                  {openDropdown === kot._id && (
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-white/90 backdrop-blur-xl rounded-lg overflow-hidden z-50 shadow-xl">
-                      {statuses.map((status) => (
-                        <button
-                          key={status.value}
-                          onClick={() => {
-                            updateKOTStatus(kot._id, status.value);
-                            setOpenDropdown(null);
-                          }}
-                          className="w-full px-3 py-2 text-left text-xs font-medium text-gray-900 hover:bg-purple-500/20 transition-colors"
-                        >
-                          {status.emoji} {status.label}
-                        </button>
-                      ))}
+                  return nextStatus ? (
+                    <button
+                      onClick={() => updateKOTStatus(kot._id, nextStatus.next)}
+                      className={`w-full px-3 py-2.5 rounded-lg text-sm font-bold text-white transition-all ${nextStatus.color} hover:opacity-90 hover:scale-105`}
+                    >
+                      {nextStatus.emoji} {nextStatus.label}
+                    </button>
+                  ) : (
+                    <div className={`w-full px-3 py-2.5 rounded-lg text-sm font-bold text-white text-center ${currentStatus.color}`}>
+                      {currentStatus.emoji} {currentStatus.label}
                     </div>
-                  )}
-                </div>
+                  );
+                })()}
               </div>
             </motion.div>
           ))}

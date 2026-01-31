@@ -18,12 +18,14 @@ import Inventory from '../components/Reasturant/Inventory/Inventory';
 import SubscriptionPlans from '../components/Reasturant/Subscription/SubscriptionPlans';
 import SubscriptionBlocker from './SubscriptionBlocker';
 import Attendance from '../components/Reasturant/Attendance/Attendance';
+import { getDefaultPage, hasAccess } from '../utils/rolePermissions';
 
 const RestaurantDashboard = () => {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const defaultPage = getDefaultPage(user.role);
+  const [activeTab, setActiveTab] = useState(defaultPage);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   const backgroundImages = {
     dashboard: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1920&q=80',
@@ -45,6 +47,13 @@ const RestaurantDashboard = () => {
     localStorage.removeItem('user');
     navigate('/restaurant-login');
   };
+
+  // Redirect if user tries to access unauthorized page
+  React.useEffect(() => {
+    if (!hasAccess(user.role, activeTab)) {
+      setActiveTab(defaultPage);
+    }
+  }, [activeTab, user.role, defaultPage]);
 
   const renderContent = () => {
     const content = (() => {

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FiHome, FiGrid, FiUsers, FiCreditCard, FiClipboard, FiPackage, FiShoppingBag, FiTag, FiStar, FiTarget, FiList, FiPlus, FiSettings, FiLogOut, FiChevronDown, FiMenu, FiX, FiBarChart, FiClock } from 'react-icons/fi';
+import { hasAccess } from '../utils/rolePermissions';
 
 const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, setSidebarOpen }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -34,11 +35,23 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
   ];
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const userRole = user.role;
 
   const handleNavClick = (tabId) => {
     setActiveTab(tabId);
     setSidebarOpen(false);
   };
+
+  // Filter menu items based on role permissions
+  const filteredMenuItems = menuItems.filter(item => hasAccess(userRole, item.id));
+  const filteredOrderSubItems = orderSubItems.filter(item => hasAccess(userRole, item.id));
+  const filteredInventorySubItems = inventorySubItems.filter(item => hasAccess(userRole, item.id));
+  const filteredMenuSubItems = menuSubItems.filter(item => hasAccess(userRole, item.id));
+
+  // Check if dropdowns should be shown
+  const showOrdersDropdown = filteredOrderSubItems.length > 0;
+  const showInventoryDropdown = filteredInventorySubItems.length > 0;
+  const showMenuDropdown = filteredMenuSubItems.length > 0;
 
   return (
     <>
@@ -93,7 +106,7 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
 
           {/* Navigation */}
           <nav className="flex-1 overflow-y-auto p-4 space-y-1">
-            {menuItems.map((item, index) => (
+            {filteredMenuItems.map((item, index) => (
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
@@ -109,6 +122,7 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
             ))}
 
             {/* Orders Dropdown */}
+            {showOrdersDropdown && (
             <div className="pt-2">
               <button
                 onClick={() => setOrderOpen(!orderOpen)}
@@ -129,7 +143,7 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
                   transition={{ duration: 0.15 }}
                   className="ml-6 mt-1 space-y-1"
                 >
-                  {orderSubItems.map((subItem) => (
+                  {filteredOrderSubItems.map((subItem) => (
                     <button
                       key={subItem.id}
                       onClick={() => handleNavClick(subItem.id)}
@@ -146,8 +160,10 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
                 </motion.div>
               )}
             </div>
+            )}
 
             {/* Inventory Dropdown */}
+            {showInventoryDropdown && (
             <div>
               <button
                 onClick={() => setInventoryOpen(!inventoryOpen)}
@@ -168,7 +184,7 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
                   transition={{ duration: 0.15 }}
                   className="ml-6 mt-1 space-y-1"
                 >
-                  {inventorySubItems.map((subItem) => (
+                  {filteredInventorySubItems.map((subItem) => (
                     <button
                       key={subItem.id}
                       onClick={() => handleNavClick(subItem.id)}
@@ -185,8 +201,10 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
                 </motion.div>
               )}
             </div>
+            )}
 
             {/* Menu Dropdown */}
+            {showMenuDropdown && (
             <div>
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
@@ -207,7 +225,7 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
                   transition={{ duration: 0.15 }}
                   className="ml-6 mt-1 space-y-1"
                 >
-                  {menuSubItems.map((subItem) => (
+                  {filteredMenuSubItems.map((subItem) => (
                     <button
                       key={subItem.id}
                       onClick={() => handleNavClick(subItem.id)}
@@ -224,10 +242,12 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
                 </motion.div>
               )}
             </div>
+            )}
           </nav>
 
           {/* Logout */}
           <div className="p-4 border-t border-white/20 space-y-2">
+            {hasAccess(userRole, 'settings') && (
             <button
               onClick={() => handleNavClick('settings')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
@@ -239,6 +259,7 @@ const RestaurantSidebar = ({ activeTab, setActiveTab, onLogout, sidebarOpen, set
               <span className="text-lg"><FiSettings /></span>
               <span>Settings</span>
             </button>
+            )}
             
             <button
               onClick={onLogout}
